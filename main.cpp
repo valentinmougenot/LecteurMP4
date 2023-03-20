@@ -6,8 +6,10 @@ int main(int argc, char *argv[])
 {
     QApplication app(argc, argv);
 
-    MainWindow window;
-
+    QWidget *parent = nullptr; // ou spécifiez un parent si nécessaire
+    MainWindow window(parent);
     window.show();
+
     return QApplication::exec();
 }
+
