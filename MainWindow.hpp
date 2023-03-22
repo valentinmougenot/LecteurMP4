@@ -7,6 +7,7 @@
 #include <QWidget>
 #include <QMediaPlaylist>
 #include <QVideoWidget>
+#include <QPushButton>
 
 class MainWindow : public QMainWindow {
 Q_OBJECT
@@ -19,13 +20,16 @@ private:
     QMediaPlayer *player;
     QMediaPlaylist *playlist;
     QVideoWidget *videoWidget;
+    QPushButton *previousButton;
+    QPushButton *playPauseButton;
+    QPushButton *stopButton;
+    QPushButton *nextButton;
 
 
 private slots:
-
     void open();
     void openDirectory();
-
+    void setPlayPauseButtonState();
 };
 
 
