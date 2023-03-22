@@ -8,28 +8,23 @@
 #include <QMediaPlaylist>
 #include <QVideoWidget>
 
-QT_BEGIN_NAMESPACE
-class QAction;
-class QMenu;
-class QSessionManager;
-QT_END_NAMESPACE
-
 class MainWindow : public QMainWindow {
 Q_OBJECT
 
-
-
 public:
-    MainWindow(QWidget *parent);
+    MainWindow();
 
+
+private:
     QMediaPlayer *player;
-    QMediaPlaylist *playlist{};
+    QMediaPlaylist *playlist;
     QVideoWidget *videoWidget;
 
 
 private slots:
 
     void open();
+    void openDirectory();
 
 };
 
