@@ -8,6 +8,7 @@
 #include <QMediaPlaylist>
 #include <QVideoWidget>
 #include <QPushButton>
+#include <QListWidget>
 
 class MainWindow : public QMainWindow {
 Q_OBJECT
@@ -24,12 +25,16 @@ private:
     QPushButton *playPauseButton;
     QPushButton *stopButton;
     QPushButton *nextButton;
+    QListWidget *listWidget;
 
 
 private slots:
     void open();
     void openDirectory();
     void setPlayPauseButtonState();
+    void setCurrentRow(int index);
+    void setCurrentIndex(QListWidgetItem *item);
+
 };
 
 
