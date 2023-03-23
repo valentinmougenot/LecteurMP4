@@ -6,7 +6,6 @@
 #include <QDirIterator>
 #include <QVBoxLayout>
 #include <QAbstractItemView>
-
 #include "MainWindow.hpp"
 
 MainWindow::MainWindow() : QMainWindow()
@@ -37,7 +36,11 @@ MainWindow::MainWindow() : QMainWindow()
     QMenu *fileMenu = menuBar()->addMenu(tr("File"));
     fileMenu->addAction(openAction);
     fileMenu->addAction(openDirectoryAction);
-    
+
+    // Créer bouton pour ajouter un fichier à la playlist
+    auto buttonAddFilePlaylist = new QPushButton(tr("Ajouter un média à la playlist"));
+    connect(buttonAddFilePlaylist, &QPushButton::clicked, this, &MainWindow::addFileToPlaylist);
+
     // Créer les boutons de contrôle avec les bonnes icônes
     previousButton = new QPushButton(this);
     previousButton->setIcon(QIcon(imagePath + "previous.png"));
@@ -62,8 +65,8 @@ MainWindow::MainWindow() : QMainWindow()
 
 
     playlistMedia->addWidget(videoWidget);
-    playlistMedia->addWidget(listWidget);
 
+    // La taille de la vidéo est 4x plus grande que celle de la playlist
     playlistMedia->setStretch(0, 4);
     playlistMedia->setStretch(1,1);
 
@@ -75,6 +78,12 @@ MainWindow::MainWindow() : QMainWindow()
     controlButtons->addWidget(playPauseButton);
     controlButtons->addWidget(stopButton);
     controlButtons->addWidget(nextButton);
+
+    auto *playlistVBox = new QVBoxLayout();
+    playlistVBox->addWidget(listWidget);
+    playlistVBox->addWidget(buttonAddFilePlaylist);
+
+    playlistMedia->addLayout(playlistVBox);
 
     // Pour centrer les boutons de la HBox
     controlButtons->setAlignment(Qt::AlignCenter);
@@ -135,4 +144,10 @@ void MainWindow::setCurrentRow(int index) {
 
 void MainWindow::setCurrentIndex(QListWidgetItem *item) {
     playlist->setCurrentIndex(listWidget->row(item));
+}
+
+void MainWindow::addFileToPlaylist(){
+    QString fileName = QFileDialog::getOpenFileName(this, tr("Ouvrir un fichier"), QDir::homePath(), tr("Fichier Vidéo (*.mp4 *.mp3 *.avi)"));
+    playlist->addMedia(QUrl::fromLocalFile(fileName));
+    listWidget->addItem(QFileInfo(fileName).fileName());
 }

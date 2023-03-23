@@ -34,7 +34,7 @@ private slots:
     void setPlayPauseButtonState();
     void setCurrentRow(int index);
     void setCurrentIndex(QListWidgetItem *item);
-
+    void addFileToPlaylist();
 };
 
 
