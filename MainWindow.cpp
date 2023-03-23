@@ -40,20 +40,20 @@ MainWindow::MainWindow() : QMainWindow()
     
     // Créer les boutons de contrôle avec les bonnes icônes
     previousButton = new QPushButton(this);
-    previousButton->setIcon(QIcon("/home/gaetan/Documents/c++/LecteurMP4/images/previous.png"));
+    previousButton->setIcon(QIcon(imagePath + "previous.png"));
     connect(previousButton, &QPushButton::clicked, playlist, &QMediaPlaylist::previous);
 
     playPauseButton = new QPushButton(this);
     connect(playPauseButton, &QPushButton::clicked, this, &MainWindow::setPlayPauseButtonState);
-    playPauseButton->setIcon(QIcon("/home/gaetan/Documents/c++/LecteurMP4/images/play.png"));
+    playPauseButton->setIcon(QIcon(imagePath + "play.png"));
 
     stopButton = new QPushButton(this);
     connect(stopButton, &QPushButton::clicked, player, &QMediaPlayer::stop);
-    stopButton->setIcon(QIcon("/home/gaetan/Documents/c++/LecteurMP4/images/stop.png"));
+    stopButton->setIcon(QIcon(imagePath + "stop.png"));
 
     nextButton = new QPushButton(this);
     connect(nextButton, &QPushButton::clicked, playlist, &QMediaPlaylist::next);
-    nextButton->setIcon(QIcon("/home/gaetan/Documents/c++/LecteurMP4/images/next.png"));
+    nextButton->setIcon(QIcon(imagePath + "next.png"));
 
     auto *centralWidget = new QWidget(this);
     auto *layout = new QVBoxLayout();
@@ -63,6 +63,10 @@ MainWindow::MainWindow() : QMainWindow()
 
     playlistMedia->addWidget(videoWidget);
     playlistMedia->addWidget(listWidget);
+
+    playlistMedia->setStretch(0, 4);
+    playlistMedia->setStretch(1,1);
+
     layout->addLayout(playlistMedia);
 
     // Une HBox pour les boutons de controle
@@ -116,11 +120,11 @@ void MainWindow::openDirectory()
 void MainWindow::setPlayPauseButtonState() {
     // On change l'état de la lecture et l'icone du bouton en fonction de l'état de la lecture
     if (player->state() == QMediaPlayer::PlayingState) {
-        playPauseButton->setIcon(QIcon("/home/gaetan/Documents/c++/LecteurMP4/images/play.png"));
+        playPauseButton->setIcon(QIcon(imagePath + "play.png"));
         player->pause();
     }
     else {
-        playPauseButton->setIcon(QIcon("/home/gaetan/Documents/c++/LecteurMP4/images/pause.png"));
+        playPauseButton->setIcon(QIcon(imagePath + "pause.png"));
         player->play();
     }
 }

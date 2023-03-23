@@ -15,7 +15,7 @@ Q_OBJECT
 
 public:
     MainWindow();
-
+    static inline QString imagePath = QString("/home/gaetan/Documents/c++/LecteurMP4/images/");
 
 private:
     QMediaPlayer *player;
