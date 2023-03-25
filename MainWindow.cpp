@@ -99,7 +99,11 @@ void MainWindow::open()
 {
     QString fileName = QFileDialog::getOpenFileName(this, tr("Ouvrir un fichier"), QDir::homePath(), tr("Fichier Vidéo (*.mp4 *.mp3 *.avi)"));
 
-    player->setMedia(QUrl::fromLocalFile(fileName));
+    playlist->clear();
+    listWidget->clear();
+
+    playlist->addMedia(QUrl::fromLocalFile(fileName));
+    listWidget->addItem(QFileInfo(fileName).fileName());
     player->play();
 }
 
@@ -107,7 +111,11 @@ void MainWindow::openDirectory()
 {
     QString directoryName = QFileDialog::getExistingDirectory(this, tr("Sélectionner un dossier"), QDir::homePath());
 
+    playlist->clear();
+    listWidget->clear();
+
     if (!directoryName.isEmpty()) {
+
         // On filtre les fichiers vidéo du dossier
         QDirIterator it(directoryName, QStringList() << "*.mp4" << "*.mp3" << "*.avi", QDir::Files, QDirIterator::Subdirectories);
         QStringList mediaFiles;
