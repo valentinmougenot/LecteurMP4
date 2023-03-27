@@ -15,7 +15,7 @@ Q_OBJECT
 
 public:
     MainWindow();
-    static inline QString imagePath = QString("/home/gaetan/Documents/c++/LecteurMP4/images/");
+    static inline QString imagePath = QString("/Volumes/T7 Shield/IUT/S4/Qt/LecteurMP4/images/");
 
 private:
     QMediaPlayer *player;
@@ -26,7 +26,6 @@ private:
     QPushButton *stopButton;
     QPushButton *nextButton;
     QListWidget *listWidget;
-
 
 private slots:
     void open();
