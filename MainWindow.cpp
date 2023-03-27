@@ -43,6 +43,12 @@ MainWindow::MainWindow() : QMainWindow()
 
     auto buttonClearPlaylist = new QPushButton(tr("Vider la playlist"));
     connect(buttonClearPlaylist, &QPushButton::clicked, this, &MainWindow::clearPlaylist);
+    // Créer le slider de progression de la vidéo
+    auto *slider = new QSlider();
+    slider->setOrientation(Qt::Horizontal);
+    connect(player, &QMediaPlayer::durationChanged, slider, &QSlider::setMaximum);
+    connect(player, &QMediaPlayer::positionChanged, slider, &QSlider::setValue);
+    connect(slider, &QSlider::sliderMoved, player, &QMediaPlayer::setPosition);
 
     // Créer les boutons de contrôle avec les bonnes icônes
     previousButton = new QPushButton(this);
@@ -66,8 +72,11 @@ MainWindow::MainWindow() : QMainWindow()
 
     auto *playlistMedia = new QHBoxLayout();
 
+    auto *videoVBox = new QVBoxLayout();
+    videoVBox->addWidget(videoWidget);
+    videoVBox->addWidget(slider);
 
-    playlistMedia->addWidget(videoWidget);
+    playlistMedia->addLayout(videoVBox);
 
     // La taille de la vidéo est 4x plus grande que celle de la playlist
     playlistMedia->setStretch(0, 4);

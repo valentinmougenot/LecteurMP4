@@ -43,6 +43,16 @@ sudo apt install cmake
 git clone https://github.com/valentinmougenot/LecteurMP4.git
 cd LecteurMP4
 ```
+
+#### Changer le chemin du dossier des images
+
+`MainWindow.hpp` ligne 18 (ne pas oublier de mettre un `/` à la fin)
+
+``` cpp
+```cpp
+static inline QString imagePath = QString("/chemin/vers/dossier/images/");
+```
+
 #### Compilation avec qmake
 
 ``` bash
