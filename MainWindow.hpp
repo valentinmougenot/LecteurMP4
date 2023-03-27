@@ -35,6 +35,7 @@ private slots:
     void setCurrentRow(int index);
     void setCurrentIndex(QListWidgetItem *item);
     void addFileToPlaylist();
+    void clearPlaylist();
 };
 
 

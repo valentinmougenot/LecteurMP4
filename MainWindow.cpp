@@ -41,6 +41,9 @@ MainWindow::MainWindow() : QMainWindow()
     auto buttonAddFilePlaylist = new QPushButton(tr("Ajouter un média à la playlist"));
     connect(buttonAddFilePlaylist, &QPushButton::clicked, this, &MainWindow::addFileToPlaylist);
 
+    auto buttonClearPlaylist = new QPushButton(tr("Vider la playlist"));
+    connect(buttonClearPlaylist, &QPushButton::clicked, this, &MainWindow::clearPlaylist);
+
     // Créer les boutons de contrôle avec les bonnes icônes
     previousButton = new QPushButton(this);
     previousButton->setIcon(QIcon(imagePath + "previous.png"));
@@ -81,6 +84,7 @@ MainWindow::MainWindow() : QMainWindow()
 
     auto *playlistVBox = new QVBoxLayout();
     playlistVBox->addWidget(listWidget);
+    playlistVBox->addWidget(buttonClearPlaylist);
     playlistVBox->addWidget(buttonAddFilePlaylist);
 
     playlistMedia->addLayout(playlistVBox);
@@ -99,8 +103,7 @@ void MainWindow::open()
 {
     QString fileName = QFileDialog::getOpenFileName(this, tr("Ouvrir un fichier"), QDir::homePath(), tr("Fichier Vidéo (*.mp4 *.mp3 *.avi)"));
 
-    playlist->clear();
-    listWidget->clear();
+    clearPlaylist();
 
     playlist->addMedia(QUrl::fromLocalFile(fileName));
     listWidget->addItem(QFileInfo(fileName).fileName());
@@ -111,8 +114,7 @@ void MainWindow::openDirectory()
 {
     QString directoryName = QFileDialog::getExistingDirectory(this, tr("Sélectionner un dossier"), QDir::homePath());
 
-    playlist->clear();
-    listWidget->clear();
+    clearPlaylist();
 
     if (!directoryName.isEmpty()) {
 
@@ -158,4 +160,11 @@ void MainWindow::addFileToPlaylist(){
     QString fileName = QFileDialog::getOpenFileName(this, tr("Ouvrir un fichier"), QDir::homePath(), tr("Fichier Vidéo (*.mp4 *.mp3 *.avi)"));
     playlist->addMedia(QUrl::fromLocalFile(fileName));
     listWidget->addItem(QFileInfo(fileName).fileName());
+}
+
+void MainWindow::clearPlaylist(){
+
+    playlist->clear();
+    listWidget->clear();
+
 }
