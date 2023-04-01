@@ -46,7 +46,7 @@ cd LecteurMP4
 
 #### Changer le chemin du dossier des images
 
-`MainWindow.hpp` ligne 18 (ne pas oublier de mettre un `/` à la fin)
+`MainWindow.hpp` ligne 19 (ne pas oublier de mettre un `/` à la fin)
 
 ```cpp
 static inline QString imagePath = QString("/chemin/vers/dossier/images/");
