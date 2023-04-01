@@ -9,6 +9,7 @@
 #include <QVideoWidget>
 #include <QPushButton>
 #include <QListWidget>
+#include <QSlider>
 
 class MainWindow : public QMainWindow {
 Q_OBJECT
@@ -21,10 +22,13 @@ private:
     QMediaPlayer *player;
     QMediaPlaylist *playlist;
     QVideoWidget *videoWidget;
+    QSlider *slider;
     QPushButton *previousButton;
     QPushButton *playPauseButton;
     QPushButton *stopButton;
     QPushButton *nextButton;
+    QPushButton *volumeButton;
+    QSlider *sliderVolume;
     QListWidget *listWidget;
 
 private slots:
@@ -35,6 +39,13 @@ private slots:
     void setCurrentIndex(QListWidgetItem *item);
     void addFileToPlaylist();
     void clearPlaylist();
+    void deleteFileFromPlaylist();
+    void setVolumeButtonState();
+
+    void setupMainElements();
+    void setupFileMenu() const;
+    void setupPlaylistButtons(QPushButton *&buttonAddFilePlaylist, QPushButton *&buttonDeleteFilePlaylist, QPushButton *&buttonClearPlaylist) const;
+    void setupControlButtons();
 };
 
 

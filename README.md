@@ -48,7 +48,6 @@ cd LecteurMP4
 
 `MainWindow.hpp` ligne 18 (ne pas oublier de mettre un `/` à la fin)
 
-``` cpp
 ```cpp
 static inline QString imagePath = QString("/chemin/vers/dossier/images/");
 ```

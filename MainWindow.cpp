@@ -11,61 +11,17 @@
 MainWindow::MainWindow() : QMainWindow()
 {
     // Créer les éléments de base
-    player = new QMediaPlayer(this);
-    playlist = new QMediaPlaylist(this);
-    videoWidget = new QVideoWidget(this);
-    setCentralWidget(videoWidget);
-    player->setVideoOutput(videoWidget);
-    player->setPlaylist(playlist);
+    setupMainElements();
 
-    // Créer la liste qui contient toutes les vidéos
-    listWidget = new QListWidget(this);
-    listWidget->setSelectionMode(QAbstractItemView::SingleSelection);
-    connect(playlist, &QMediaPlaylist::currentIndexChanged, this, &MainWindow::setCurrentRow);
-    connect(listWidget, &QListWidget::itemDoubleClicked, this, &MainWindow::setCurrentIndex);
+    // Créer le menu pour ouvrir un fichier
+    setupFileMenu();
 
-    // Créer une action pour ouvrir un fichier
-    auto *openAction = new QAction(tr("Open"), this);
-    connect(openAction, &QAction::triggered, this, &MainWindow::open);
+    QPushButton *buttonAddFilePlaylist;
+    QPushButton *buttonDeleteFilePlaylist;
+    QPushButton *buttonClearPlaylist;
+    setupPlaylistButtons(buttonAddFilePlaylist, buttonDeleteFilePlaylist, buttonClearPlaylist);
 
-    // Créer une action pour ouvrir un dossier
-    auto *openDirectoryAction = new QAction(tr("Open Directory"), this);
-    connect(openDirectoryAction, &QAction::triggered, this, &MainWindow::openDirectory);
-
-    // Créer une barre de menu et ajouter les actions d'ouverture de fichier et de dossier
-    QMenu *fileMenu = menuBar()->addMenu(tr("File"));
-    fileMenu->addAction(openAction);
-    fileMenu->addAction(openDirectoryAction);
-
-    // Créer bouton pour ajouter un fichier à la playlist
-    auto buttonAddFilePlaylist = new QPushButton(tr("Ajouter un média à la playlist"));
-    connect(buttonAddFilePlaylist, &QPushButton::clicked, this, &MainWindow::addFileToPlaylist);
-
-    auto buttonClearPlaylist = new QPushButton(tr("Vider la playlist"));
-    connect(buttonClearPlaylist, &QPushButton::clicked, this, &MainWindow::clearPlaylist);
-    // Créer le slider de progression de la vidéo
-    auto *slider = new QSlider();
-    slider->setOrientation(Qt::Horizontal);
-    connect(player, &QMediaPlayer::durationChanged, slider, &QSlider::setMaximum);
-    connect(player, &QMediaPlayer::positionChanged, slider, &QSlider::setValue);
-    connect(slider, &QSlider::sliderMoved, player, &QMediaPlayer::setPosition);
-
-    // Créer les boutons de contrôle avec les bonnes icônes
-    previousButton = new QPushButton(this);
-    previousButton->setIcon(QIcon(imagePath + "previous.png"));
-    connect(previousButton, &QPushButton::clicked, playlist, &QMediaPlaylist::previous);
-
-    playPauseButton = new QPushButton(this);
-    connect(playPauseButton, &QPushButton::clicked, this, &MainWindow::setPlayPauseButtonState);
-    playPauseButton->setIcon(QIcon(imagePath + "play.png"));
-
-    stopButton = new QPushButton(this);
-    connect(stopButton, &QPushButton::clicked, player, &QMediaPlayer::stop);
-    stopButton->setIcon(QIcon(imagePath + "stop.png"));
-
-    nextButton = new QPushButton(this);
-    connect(nextButton, &QPushButton::clicked, playlist, &QMediaPlaylist::next);
-    nextButton->setIcon(QIcon(imagePath + "next.png"));
+    setupControlButtons();
 
     auto *centralWidget = new QWidget(this);
     auto *layout = new QVBoxLayout();
@@ -90,10 +46,13 @@ MainWindow::MainWindow() : QMainWindow()
     controlButtons->addWidget(playPauseButton);
     controlButtons->addWidget(stopButton);
     controlButtons->addWidget(nextButton);
+    controlButtons->addWidget(volumeButton);
+    controlButtons->addWidget(sliderVolume);
 
     auto *playlistVBox = new QVBoxLayout();
     playlistVBox->addWidget(listWidget);
     playlistVBox->addWidget(buttonClearPlaylist);
+    playlistVBox->addWidget(buttonDeleteFilePlaylist);
     playlistVBox->addWidget(buttonAddFilePlaylist);
 
     playlistMedia->addLayout(playlistVBox);
@@ -105,7 +64,90 @@ MainWindow::MainWindow() : QMainWindow()
 
     centralWidget->setLayout(layout);
     setCentralWidget(centralWidget);
+}
 
+void MainWindow::setupControlButtons() {
+    sliderVolume = new QSlider();
+    sliderVolume->setOrientation(Qt::Horizontal);
+    sliderVolume->setMaximumWidth(100);
+    sliderVolume->setValue(100);
+    connect(player, &QMediaPlayer::volumeChanged, sliderVolume, &QSlider::setValue);
+    connect(sliderVolume, &QSlider::sliderMoved, player, &QMediaPlayer::setVolume);
+
+    // Créer les boutons de contrôle avec les bonnes icônes
+    previousButton = new QPushButton(this);
+    previousButton->setIcon(QIcon(imagePath + "previous.png"));
+    previousButton->setFixedSize(80, 50);
+    connect(previousButton, &QPushButton::clicked, playlist, &QMediaPlaylist::previous);
+
+    playPauseButton = new QPushButton(this);
+    playPauseButton->setIcon(QIcon(imagePath + "play.png"));
+    playPauseButton->setFixedSize(80, 50);
+    connect(playPauseButton, &QPushButton::clicked, this, &MainWindow::setPlayPauseButtonState);
+
+    stopButton = new QPushButton(this);
+    stopButton->setIcon(QIcon(imagePath + "stop.png"));
+    stopButton->setFixedSize(80, 50);
+    connect(stopButton, &QPushButton::clicked, player, &QMediaPlayer::stop);
+
+    nextButton = new QPushButton(this);
+    nextButton->setIcon(QIcon(imagePath + "next.png"));
+    nextButton->setFixedSize(80, 50);
+    connect(nextButton, &QPushButton::clicked, playlist, &QMediaPlaylist::next);
+
+    volumeButton = new QPushButton(this);
+    volumeButton->setIcon(QIcon(imagePath + "volume.png"));
+    volumeButton->setFixedSize(40, 40);
+    connect(volumeButton, &QPushButton::clicked, this, &MainWindow::setVolumeButtonState);
+}
+
+void MainWindow::setupPlaylistButtons(QPushButton *&buttonAddFilePlaylist, QPushButton *&buttonDeleteFilePlaylist, QPushButton *&buttonClearPlaylist) const {
+    buttonAddFilePlaylist= new QPushButton(tr("Ajouter un média à la playlist"));
+    buttonDeleteFilePlaylist= new QPushButton(tr("Supprimer un média de la playlist"));
+    buttonClearPlaylist= new QPushButton(tr("Vider la playlist"));// Créer le bouton pour ajouter un fichier à la playlist
+    connect(buttonAddFilePlaylist, &QPushButton::clicked, this, &MainWindow::addFileToPlaylist);
+
+    // Créer le bouton pour supprimer un fichier de la playlist
+    connect(buttonDeleteFilePlaylist, &QPushButton::clicked, this, &MainWindow::deleteFileFromPlaylist);
+
+    // Créer le bouton pour vider la playlist
+    connect(buttonClearPlaylist, &QPushButton::clicked, this, &MainWindow::clearPlaylist);
+}
+
+void MainWindow::setupFileMenu() const {
+    // Créer une action pour ouvrir un fichier
+    auto *openAction = new QAction(tr("Open"));
+    connect(openAction, &QAction::triggered, this, &MainWindow::open);
+
+    // Créer une action pour ouvrir un dossier
+    auto *openDirectoryAction = new QAction(tr("Open Directory"));
+    connect(openDirectoryAction, &QAction::triggered, this, &MainWindow::openDirectory);
+
+    // Créer une barre de menu et ajouter les actions d'ouverture de fichier et de dossier
+    QMenu *fileMenu = menuBar()->addMenu(tr("File"));
+    fileMenu->addAction(openAction);
+    fileMenu->addAction(openDirectoryAction);
+}
+
+void MainWindow::setupMainElements() {
+    player = new QMediaPlayer(this);
+    playlist = new QMediaPlaylist(this);
+    videoWidget = new QVideoWidget(this);
+    player->setVideoOutput(videoWidget);
+    player->setPlaylist(playlist);
+
+    // Créer la liste qui contient toutes les vidéos
+    listWidget = new QListWidget(this);
+    listWidget->setSelectionMode(QAbstractItemView::SingleSelection);
+    connect(playlist, &QMediaPlaylist::currentIndexChanged, this, &MainWindow::setCurrentRow);
+    connect(listWidget, &QListWidget::itemDoubleClicked, this, &MainWindow::setCurrentIndex);
+
+    // Créer le slider de progression de la vidéo
+    slider = new QSlider();
+    slider->setOrientation(Qt::Horizontal);
+    connect(player, &QMediaPlayer::durationChanged, slider, &QSlider::setMaximum);
+    connect(player, &QMediaPlayer::positionChanged, slider, &QSlider::setValue);
+    connect(slider, &QSlider::sliderMoved, player, &QMediaPlayer::setPosition);
 }
 
 void MainWindow::open()
@@ -126,7 +168,6 @@ void MainWindow::openDirectory()
     clearPlaylist();
 
     if (!directoryName.isEmpty()) {
-
         // On filtre les fichiers vidéo du dossier
         QDirIterator it(directoryName, QStringList() << "*.mp4" << "*.mp3" << "*.avi", QDir::Files, QDirIterator::Subdirectories);
         QStringList mediaFiles;
@@ -172,8 +213,26 @@ void MainWindow::addFileToPlaylist(){
 }
 
 void MainWindow::clearPlaylist(){
-
     playlist->clear();
     listWidget->clear();
+}
 
+void MainWindow::deleteFileFromPlaylist(){
+    int i = listWidget->currentRow();
+    playlist->removeMedia(i);
+    listWidget->takeItem(i);
+}
+
+void MainWindow::setVolumeButtonState() {
+    // On change l'état du volume et du slider et de l'icone en fonction du volume
+    if (player->isMuted()) {
+        volumeButton->setIcon(QIcon(imagePath + "volume.png"));
+        player->setMuted(false);
+        sliderVolume->setValue(player->volume());
+    }
+    else {
+        volumeButton->setIcon(QIcon(imagePath + "mute.png"));
+        player->setMuted(true);
+        sliderVolume->setValue(0);
+    }
 }
